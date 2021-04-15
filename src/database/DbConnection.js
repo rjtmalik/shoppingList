@@ -9,14 +9,21 @@ export default function DbConnection() {
     };
   }
 
-  function addItem(item, callbackFn) {
+  function addItem(item, callbackObj) {
     function addEntryInDb(db) {
       let addReqeust = db
         .transaction("shoppingListItems", "readwrite")
         .objectStore("shoppingListItems")
-        .add({ itemName: item.itemName, shopName: item.shopName});
+        .add({ itemName: item.itemName, shopName: item.shopName });
       addReqeust.onsuccess = function (event) {
-        callbackFn();
+        callbackObj.handleSuccess();
+      };
+      addReqeust.onerror = function (event) {
+        if (event.target.error.name === "ConstraintError") {
+          callbackObj.handleError(`${item.itemName} is already present in the shopping list`);
+        } else {
+          callbackObj.handleError(event.target.error.message);
+        }
       };
     }
     openConn(addEntryInDb);
@@ -68,11 +75,9 @@ export default function DbConnection() {
         console.log("added to purchased list");
       };
 
-      Promise.all([deleteRequest, addToPurcahsedListRequest])
-      .then((values)=>{
+      Promise.all([deleteRequest, addToPurcahsedListRequest]).then((values) => {
         callbackFn(actionableItem);
       });
-
     }
     openConn(dbUpdate);
   }

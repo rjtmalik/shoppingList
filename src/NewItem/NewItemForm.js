@@ -5,12 +5,12 @@ import SaveNewItemButton from "./SaveNewItemButton";
 
 export default function NewItemForm() {
   function handleTextFilled(event) {
-    let itemName = document.querySelector("#txtItemName").value.trim();
-    let shopName = document.querySelector("#txtShopName").value.trim();
-    if (itemName !== "" && shopName !== "") {
-      setItemToInsert({ itemName, shopName });
-    } else {
-      setItemToInsert({});
+    let userInput = event.target.value.trim();
+    if(event.target.id === 'txtItemName'){
+      setItemToInsert({ itemName: userInput, shopName: itemToInsert.shopName });
+    }
+    else{
+      setItemToInsert({ itemName: itemToInsert.itemName, shopName: userInput });
     }
   }
 

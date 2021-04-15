@@ -1,18 +1,31 @@
-import React, {useContext} from "react";
+import React, { useContext } from "react";
 import Button from "react-bootstrap/Button";
 import DbConnection from "../database/DbConnection";
-import { useHistory } from "react-router-dom";
-import {NotificationContext} from '../notifications/notification-context';
+import { NotificationContext } from "../notifications/notification-context";
 
 export default function SaveNewItemButton({ itemToInsert }) {
-  const notificationCtx = useContext(NotificationContext)
+  const notificationCtx = useContext(NotificationContext);
 
   function addNewItem() {
-    function showShoppingList() {
-      notificationCtx({type:'success', text:`successfully saved ${itemToInsert.itemName}`})
+    function callbackOnCompletion() {
+      function handleSuccess() {
+        notificationCtx({
+          type: "success",
+          text: `successfully saved ${itemToInsert.itemName}`,
+        });
+      }
+
+      function handleError(errorDescription) {
+        notificationCtx({ type: "error", text: errorDescription });
+      }
+
+      return {
+        handleError,
+        handleSuccess,
+      };
     }
 
-    DbConnection().addItem(itemToInsert, showShoppingList);
+    DbConnection().addItem(itemToInsert, callbackOnCompletion());
   }
 
   return (

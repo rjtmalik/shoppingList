@@ -19,7 +19,7 @@ export default function AutoHidingNotification({ notification }) {
 
   function hideElement() {
     const currentTime = new Date().getTime();
-    if (currentTime - startTime > 500) {
+    if (currentTime - startTime > 800) {
       document.querySelector("#lblnotification").classList.remove('show');
     } else {
       requestAnimationFrame(hideElement);
@@ -27,19 +27,14 @@ export default function AutoHidingNotification({ notification }) {
   }
 
   if (notification.text) {
-    document.querySelector("#lblnotification").classList.add('show');
     requestAnimationFrame(hideElement);
   }
 
   return (
     <React.Fragment>
       {notification.text && (
-        <Alert id="lblnotification" variant={getVariantFrom(notification)}>
-          {notification.text}!
-        </Alert>
-      )}
-      {!notification.text && (
-        <Alert id="lblnotification" variant="success">
+        <Alert id="lblnotification" className="show" variant={getVariantFrom(notification)}>
+          {notification.text}
         </Alert>
       )}
     </React.Fragment>
